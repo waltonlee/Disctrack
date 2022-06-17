@@ -144,8 +144,11 @@ class Field(Canvas):
         self.possession = []
         self.bind('<Button-1>', self.click_handler)
 
-    def enable(self):
-        self.possession.append(Catch(self.x, self.y))  # TODO: receiver class
+    def enable(self, name):
+        # TODO: receiver class
+        self.possession.append(Catch(self.x, self.y, name))
+        for button in self.buttons:
+            button.destroy()
         print(self.possession)
         self.pass_mode = True
 
@@ -166,7 +169,7 @@ class Field(Canvas):
             # show buttons/disable clicking then hide buttons/enable clicking
             for i, p in enumerate(teams[current_team]):
                 flip = 1 if event.y < 200 else -1
-                button = ReceiverSelect(self, p, command=self.enable)
+                button = ReceiverSelect(self, p)
                 self.buttons.append(button)
                 button.place(x=event.x, y=event.y +
                              (i * flip * 30) + ((flip - 1) * 15))
@@ -176,9 +179,10 @@ class Field(Canvas):
 
 class ReceiverSelect(Button):
     def __init__(self, parent, name, **kwargs):
+        def callback():
+            parent.enable(name)
         super().__init__(parent, text=name,
-                         bg='#7CFC00', fg='black', **kwargs)
-        self.name = name
+                         bg='#7CFC00', fg='black', command=callback, **kwargs)
 
 
 root = Tk()
